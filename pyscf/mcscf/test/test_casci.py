@@ -111,8 +111,8 @@ class KnownValues(unittest.TestCase):
         self.assertAlmostEqual(mc1.e_tot[0], -108.83741684447352, 9)
         self.assertAlmostEqual(mc1.e_tot[1], -108.72522194135604, 9)
         dm1 = mc1.analyze()
-        self.assertAlmostEqual(lib.finger(dm1[0]), 2.6252082970845532, 7)
-        self.assertAlmostEqual(lib.finger(dm1[1]), 2.6252082970845532, 7)
+        self.assertAlmostEqual(lib.fp(dm1[0]), 2.6252082970845532, 7)
+        self.assertAlmostEqual(lib.fp(dm1[1]), 2.6252082970845532, 7)
 
     def test_external_fcisolver(self):
         class FCI_as_DMRG(fci.direct_spin1.FCISolver):
@@ -130,7 +130,7 @@ class KnownValues(unittest.TestCase):
         self.assertAlmostEqual(mc1.e_tot[0], -108.83741684447352, 9)
         self.assertAlmostEqual(mc1.e_tot[1], -108.72522194135604, 9)
         dm1 = mc1.analyze(with_meta_lowdin=False)
-        self.assertAlmostEqual(lib.finger(dm1[0]), 2.6252082970845532*2, 7)
+        self.assertAlmostEqual(lib.fp(dm1[0]), 2.6252082970845532*2, 7)
 
     def test_get_h2eff(self):
         mc1 = mcscf.approx_hessian(mcscf.CASCI(m, 4, 4))
@@ -154,15 +154,15 @@ class KnownValues(unittest.TestCase):
         self.assertAlmostEqual(abs(veff1-veff2).max(), 0, 12)
 
     def test_with_ci_init_guess(self):
-        mc1 = mcscf.CASCI(msym, 4, 4)
-        ci0 = numpy.zeros((6,6))
-        ci0[0,1] = 1
-        mc1.kernel(ci0=ci0)
-
         mc2 = mcscf.CASCI(msym, 4, 4)
         mc2.wfnsym = 'A1u'
         mc2.kernel()
-        self.assertAlmostEqual(mc1.e_tot, mc2.e_tot, 9)
+        self.assertAlmostEqual(mc2.e_tot, -108.7252219413561, 9)
+
+        mc2 = mcscf.CASCI(msym, 4, (3, 1))
+        mc2.wfnsym = 4
+        mc2.kernel()
+        self.assertAlmostEqual(mc2.e_tot, -108.62009625745821, 9)
 
     def test_slight_symmetry_broken(self):
         mf = copy.copy(msym)

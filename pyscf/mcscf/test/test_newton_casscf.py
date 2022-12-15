@@ -53,6 +53,7 @@ def setUpModule():
     solver1.spin = 0
     solver1.nroots = 2
     solver2 = fci.FCI(mol_N2, singlet=False)
+    solver2.wfnsym = 'A1u'
     solver2.spin = 2
     mc_N2 = CASSCF(mf_N2, 4, 4)
     mc_N2 = addons.state_average_mix_(mc_N2, [solver1, solver2],
@@ -83,12 +84,12 @@ class KnownValues(unittest.TestCase):
         ci0 = numpy.random.random((6,6))
         ci0/= numpy.linalg.norm(ci0)
         gall, gop, hop, hdiag = newton_casscf.gen_g_hop(mc, mo, ci0, mc.ao2mo(mo))
-        self.assertAlmostEqual(lib.finger(gall), 21.288022525148595, 8)
-        self.assertAlmostEqual(lib.finger(hdiag), -4.6864640132374618, 8)
+        self.assertAlmostEqual(lib.fp(gall), 21.288022525148595, 8)
+        self.assertAlmostEqual(lib.fp(hdiag), -4.6864640132374618, 8)
         x = numpy.random.random(gall.size)
         u, ci1 = newton_casscf.extract_rotation(mc, x, 1, ci0)
-        self.assertAlmostEqual(lib.finger(gop(u, ci1)), -412.9441873541524, 8)
-        self.assertAlmostEqual(lib.finger(hop(x)), 73.358310983341198, 8)
+        self.assertAlmostEqual(lib.fp(gop(u, ci1)), -412.9441873541524, 8)
+        self.assertAlmostEqual(lib.fp(hop(x)), 73.358310983341198, 8)
 
     def test_get_grad(self):
         self.assertAlmostEqual(mc.e_tot, -3.6268060853430573, 8)
@@ -101,12 +102,12 @@ class KnownValues(unittest.TestCase):
         ci0/= numpy.linalg.norm(ci0, axis=1)[:,None]
         ci0 = list (ci0.reshape ((2,6,6)))
         gall, gop, hop, hdiag = newton_casscf.gen_g_hop(sa, mo, ci0, sa.ao2mo(mo))
-        self.assertAlmostEqual(lib.finger(gall), 32.46973284682045, 8)
-        self.assertAlmostEqual(lib.finger(hdiag), -63.6527761153809, 8)
+        self.assertAlmostEqual(lib.fp(gall), 32.46973284682045, 8)
+        self.assertAlmostEqual(lib.fp(hdiag), -63.6527761153809, 8)
         x = numpy.random.random(gall.size)
         u, ci1 = newton_casscf.extract_rotation(sa, x, 1, ci0)
-        self.assertAlmostEqual(lib.finger(gop(u, ci1)), -49.017079186126, 8)
-        self.assertAlmostEqual(lib.finger(hop(x)), 169.47893548740288, 8)
+        self.assertAlmostEqual(lib.fp(gop(u, ci1)), -49.017079186126, 8)
+        self.assertAlmostEqual(lib.fp(hop(x)), 169.47893548740288, 8)
 
     def test_sa_get_grad(self):
         self.assertAlmostEqual(sa.e_tot, -3.62638372957158, 7)
@@ -131,5 +132,3 @@ class KnownValues(unittest.TestCase):
 if __name__ == "__main__":
     print("Full Tests for mcscf.addons")
     unittest.main()
-
-

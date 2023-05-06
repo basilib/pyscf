@@ -798,7 +798,7 @@ void LIBXC_eval_xc(int nfn, int *fn_id, double *fac, double *omega,
                                 func.cam_omega = omega[i];
                         }
 #else
-                        if (func.hyb_omega[0] != 0) {
+                        if (func.hyb_omega != NULL && func.hyb_omega[0] != 0) {
                                 func.hyb_omega[0] = omega[i];
                         }
 #endif
@@ -810,7 +810,7 @@ void LIBXC_eval_xc(int nfn, int *fn_id, double *fac, double *omega,
                                         func.func_aux[j]->cam_omega = omega[i];
                                 }
 #else
-                                if (func.func_aux[j]->hyb_omega[0] != 0) {
+                                if (func.func_aux[j]->hyb_omega != NULL && func.func_aux[j]->hyb_omega[0] != 0) {
                                         func.func_aux[j]->hyb_omega[0] = omega[i];
                                 }
 #endif
@@ -909,7 +909,7 @@ void LIBXC_xc_reference(int xc_id, const char **refs)
         xc_func_type func;
         if(xc_func_init(&func, xc_id, XC_UNPOLARIZED) != 0){
                 fprintf(stderr, "XC functional %d not found\n", xc_id);
-                exit(1);
+                raise_error;
         }
 
         int i;
@@ -920,4 +920,14 @@ void LIBXC_xc_reference(int xc_id, const char **refs)
                 }
                 refs[i] = func.info->refs[i]->ref;
         }
+}
+
+int LIBXC_is_nlc(int xc_id)
+{
+        xc_func_type func;
+        if(xc_func_init(&func, xc_id, XC_UNPOLARIZED) != 0){
+                fprintf(stderr, "XC functional %d not found\n", xc_id);
+                raise_error -1;
+        }
+        return func.info->flags & XC_FLAGS_VV10;
 }

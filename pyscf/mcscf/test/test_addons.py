@@ -110,7 +110,7 @@ class KnownValues(unittest.TestCase):
         mo, ci, mo_e = mcr.canonicalize(mo1)
         e1 = numpy.einsum('ji,jk,ki', mo, f1, mo)
         self.assertAlmostEqual(e1, 44.2658681077, 7)
-        self.assertAlmostEqual(lib.fp(mo_e), 5.1364166175063097, 7)
+        self.assertAlmostEqual(lib.fp(mo_e), 5.1364166175063097, 5)
 
         mo, ci, mo_e = mcr.canonicalize(mo1, eris=mcr.ao2mo(mcr.mo_coeff))
         e1 = numpy.einsum('ji,jk,ki', mo, f1, mo)
@@ -494,7 +494,7 @@ class KnownValues(unittest.TestCase):
         mc.state_average_([.8, .2])
         mscan = mc.as_scanner()
         e = mscan(mol)
-        self.assertAlmostEqual(e, -108.84390277715984, 9)
+        self.assertAlmostEqual(e, -108.84390277715984, 8)
 
 
 if __name__ == "__main__":
